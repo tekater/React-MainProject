@@ -1,89 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import useProducts from "../store/useProducts";
-import Alert from "../components/ui/Alert/Alert";
-import useDisclosure from "../hooks/useDisclosure";
+import Modal from "../components/ui/Modal/Modal";
 
 const CardDetails = () => {
-  // Показ/скрытие компонента Alert
-  const alertData = useDisclosure();
+    const { state } = useLocation();
+    const [isOpenImage, setOpenImage] = useState(false);
 
-  // Получение данных о карточке
-  const { state } = useLocation();
-
-  // Достаем метод добавления из стора
-  const { addToCart } = useProducts();
-
-  // Обработчик добавления товара в корзину
-  const handleAddToCart = () => {
-    // Добавляем товар в стор
-    addToCart(state);
-
-    // Уведомляем пользователя
-    alertData?.onOpen();
-  };
-
-  return (
-    <section className="card-details">
-      <div className="max-w-7xl mx-auto px-2">
-        <Link
-          to="/cards"
-          className="inline-flex w-20 text-indigo-500 hover:text-indigo-600 mb-8"
-        >
-          Go back
-        </Link>
-        <h2 className="mb-4 text-4xl font-bold text-zinc-800">{state?.name}</h2>
-        <div className="max-w-md rounded shadow-lg relative">
-          <div className="relative">
-            <div className="absolute inset-0 bg-black opacity-30 rounded"></div>
-            <img
-              className="w-full rounded"
-              src={state?.imgSrc}
-              alt={state?.title}
-            />
-          </div>
-
-          <button
-            className={`absolute top-0 left-0 m-2 p-2 rounded-full ${
-              state?.isFavorite ? "text-indigo-500" : "text-white"
-            }`}
-          >
-            <svg
-              className="w-6 h-6 fill-current"
-              viewBox="0 0 32 32"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="m16 28c7-4.733 14-10 14-17 0-1.792-.683-3.583-2.05-4.95-1.367-1.366-3.158-2.05-4.95-2.05-1.791 0-3.583.684-4.949 2.05l-2.051 2.051-2.05-2.051c-1.367-1.366-3.158-2.05-4.95-2.05-1.791 0-3.583.684-4.949 2.05-1.367 1.367-2.051 3.158-2.051 4.95 0 7 7 12.267 14 17z"></path>
-            </svg>
-          </button>
-          <div className="px-6 py-4">
-            <p className="text-gray-600 text-sm mb-2">{state?.description}</p>
-            <p className="text-gray-600 text-sm mb-2">{state?.category}</p>
-            {state?.rating && (
-              <div className="text-yellow-500 mb-2">
-                {"★".repeat(Math.floor(state?.rating)) +
-                  "☆".repeat(5 - Math.floor(state?.rating))}
-              </div>
-            )}
-            <div className="text-lg font-bold mb-2">{state?.price}$</div>
-            <button
-              onClick={handleAddToCart}
-              className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded"
-            >
-              Add to Cart
-            </button>
-          </div>
-        </div>
-      </div>
-      <Alert
-        variant="success"
-        title="Добавление товара"
-        subtitle="Товар успешно добавлен!"
-        isOpen={alertData?.isOpen}
-        onClose={alertData?.onClose}
-      />
-    </section>
-  );
+    return (
+        <section>
+            <Link to="/cards" className="inline-flex w-25 text-indigo-500 hover:text-indigo-600 mb-8 px-20" >◀️ Go back
+            </Link>
+            <div className="max-w-2xl mx-auto">
+                <div className="flex justify-between mb-4">
+                    <h2 className="mb-4 text-4xl font-bold text-zinc-800">{state?.name}</h2>
+                    <button
+                        className={
+                            state?.isFavorite ?
+                                "bg-fuchsia-600 text-white rounded-full text-sm px-5 py-2.5 text-center mb-2 dark:hover:bg-fuchsia-700" :
+                                "bg-teal-500 text-white rounded-full text-sm px-5 py-2.5 text-center mb-2 dark:hover:bg-teal-600"
+                        }>Featured</button>
+                </div >
+                <img onClick={() => setOpenImage(true)} src={state?.imgSrc} alt={state?.name} />
+                {isOpenImage && (
+                    <Modal
+                        onClose={() => setOpenImage(false)}
+                        title={state?.name}
+                        isOpen={isOpenImage}
+                    >
+                        <img className="max-h-full rounded" src={state?.imgSrc} alt={state?.name} />
+                    </Modal>
+                )}
+                <div className="px-6 py-4">
+                    <p className="text-gray-600 text-lg mb-2">{state?.description}</p>
+                    <p className="text-gray-600 text-lg mb-2">Category: {state?.category}</p>
+                    {state?.rating && (
+                        <div className="text-yellow-500 text-2xl mb-2">
+                            {"★".repeat(Math.floor(state?.rating)) +
+                                "☆".repeat(5 - Math.floor(state?.rating))}
+                        </div>
+                    )}
+                    <div className="flex justify-between text-lg font-bold mb-2">${state?.price}
+                        <button className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded">
+                            Buy
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <Link to="/cards" className="inline-flex w-25 text-indigo-500 hover:text-indigo-600 mb-8 px-20" >◀️ Go back </Link>
+        </section>
+    );
 };
 
 export default CardDetails;
