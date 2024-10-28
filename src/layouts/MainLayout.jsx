@@ -6,7 +6,7 @@ const MainLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow container mx-auto p-4 mt-16">
+      <main className="flex-grow mx-auto p-4 mt-16">
         <Outlet />
       </main>
       <Footer />
@@ -14,4 +14,4 @@ const MainLayout = () => {
   );
 };
 
-export default MainLayout;
+export default MainLayout;z
